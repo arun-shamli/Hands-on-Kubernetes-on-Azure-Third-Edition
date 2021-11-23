@@ -1,3 +1,8 @@
+az aks get-credentials \
+--resource-group rg-handsonaks \
+--name handsonaks
+
+
 kubectl create -f azure-vote.yaml
 
 kubectl get pods --watch
