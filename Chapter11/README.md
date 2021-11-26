@@ -1,4 +1,7 @@
 ```
+USERID=ak8017
+SSH_PUBLIC_KEY=/home/ak8017/.ssh/arun.shamli.id_rsa.pub
+
 az aks delete -n handsonaks -g rg-handsonaks -y
 
 az group create -l eastus -n rg-handsonaks
@@ -32,8 +35,7 @@ az aks create \
   --enable-private-cluster \
   --node-count 1 \
   --node-vm-size Standard_DS2_v2 \
-  --ssh-key-value /home/ak8017/.ssh/arun.shamli.id_rsa.pub
-
+  --ssh-key-value $SSH_PUBLIC_KEY
 
 az aks get-credentials -n handsonaks -g rg-handsonaks
 ```
@@ -53,8 +55,7 @@ VM_SUBNET_ID=$(az network vnet subnet show \
 
 az group create -l eastus --name rg-handsonaks-vm
 
-USERID=ak8017
-SSH_PUBLIC_KEY=/home/ak8017/.ssh/arun.shamli.id_rsa.pub
+
 
 az vm create --name vm-handsonaks \
 --resource-group rg-handsonaks-vm \
@@ -68,3 +69,30 @@ scp -i arun.shamli.id_rsa ~/.kube/config ak8017@4$PUBLIC_IP:~
 ssh -i arun.shamli.id_rsa ak8017@$PUBLIC_IP
 ```
 
+## Deleting the resources
+```
+az group delete -n rg-handsonaks-vm -y
+
+az aks delete -g rg-handsonaks -n handsonaks -y
+
+```
+
+## Azure Network policies
+
+```
+SSH_PUBLIC_KEY=/home/ak8017/.ssh/arun.shamli.id_rsa.pub
+
+az aks create \
+--resource-group rg-handsonaks \
+--name handsonaks \
+--enable-managed-identity \
+--node-count 2 \
+--node-vm-size Standard_DS2_v2 \
+--ssh-key-value $SSH_PUBLIC_KEY \
+--network-plugin azure \
+--network-policy azure
+
+
+az aks delete -n handsonaks -g rg-handsonaks -y
+
+```
